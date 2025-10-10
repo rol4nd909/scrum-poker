@@ -13,8 +13,4 @@
   router-outlet {
     display: contents;
   }
-
-  body {
-    background-color: red;
-  }
 }
