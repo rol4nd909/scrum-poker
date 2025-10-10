@@ -1,4 +1,8 @@
-@if (room) {
+@if (!room()) {
+  <p>Something went wrong</p>
+}
+
+@if (room(); as room) {
   <p>
     <strong>Geef een schatting van de inspanning - kies een van de kaarten.</strong><br>
     Elk teamlid moet de complexiteit van de PBI inschatten.

@@ -1,0 +1,7 @@
+<header>
+  <h1>Ki&S Weebtools Scrum Poker</h1>
+  @if (participant(); as participant) {
+    <span>Hi, {{ participant.name }}</span>
+    <button (click)="leaveRoom()">Leave Room</button>
+  }
+</header>

@@ -1,92 +1,110 @@
 import { Injectable } from '@angular/core';
-import { arrayUnion, doc, docData, Firestore, updateDoc } from '@angular/fire/firestore';
+import { doc, docData, Firestore, runTransaction, updateDoc } from '@angular/fire/firestore';
 import { firstValueFrom, type Observable } from 'rxjs';
 import type { Room } from '~models/room.model';
 import type { Participant } from '~models/participant.model';
 import { v4 as uuidv4 } from 'uuid';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class FirestoreService {
   constructor(private firestore: Firestore) {}
 
-  /** 🔹 Helper: get document reference */
   private getRoomRef(roomId: string) {
     return doc(this.firestore, `rooms/${roomId}`);
   }
 
-  /** 🔹 Helper: get snapshot as Room */
-  private async getRoomSnapshot(roomId: string): Promise<Room | null> {
-    const snap = await firstValueFrom(docData(this.getRoomRef(roomId)));
-    return snap ? (snap as Room) : null;
-  }
-
-  /** 🔹 Helper: run a callback with a room */
-  private async withRoom(roomId: string, fn: (room: Room) => Promise<void> | void): Promise<void> {
-    const room = await this.getRoomSnapshot(roomId);
-    if (!room) return;
-    await fn(room);
-  }
-
-  /** Get a single room (realtime) */
   getRoom(roomId: string): Observable<Room> {
     return docData(this.getRoomRef(roomId), { idField: 'id' }) as Observable<Room>;
   }
 
-  /** Add or re-add participant */
-  async addParticipant(roomId: string, participant: Participant | Omit<Participant, 'id'>) {
-    const newParticipant: Participant = {
-      id: 'id' in participant ? participant.id : uuidv4(),
-      name: participant.name,
-      vote: participant.vote ?? null,
-    };
+  async addParticipant(roomId: string, participant: Participant) {
+    const roomRef = this.getRoomRef(roomId);
 
-    await updateDoc(this.getRoomRef(roomId), {
-      participants: arrayUnion(newParticipant),
+    await runTransaction(this.firestore, async (transaction) => {
+      const roomDoc = await transaction.get(roomRef);
+      if (!roomDoc.exists()) throw new Error(`Room ${roomId} not found`);
+
+      const data = roomDoc.data() as Room;
+      const participants: Participant[] = data.participants || [];
+
+      const exists = participants.some((p) => p.id === participant.id);
+      const updated = exists
+        ? participants.map((p) => (p.id === participant.id ? participant : p))
+        : [...participants, participant];
+
+      transaction.update(roomRef, { participants: updated });
     });
   }
 
-  /** Remove all participants from a room */
+  async removeParticipant(roomId: string, participant: Participant) {
+    const roomRef = this.getRoomRef(roomId);
+
+    await runTransaction(this.firestore, async (transaction) => {
+      const roomDoc = await transaction.get(roomRef);
+      if (!roomDoc.exists()) return;
+
+      const data = roomDoc.data() as Room;
+      const participants: Participant[] = data.participants || [];
+
+      const updated = participants.filter((p) => p.id !== participant.id);
+
+      transaction.update(roomRef, { participants: updated });
+    });
+  }
+
   clearParticipants(roomId: string) {
     return updateDoc(this.getRoomRef(roomId), { participants: [], revealed: false });
   }
 
-  /** Update participant’s vote, or re-add if missing */
   async updateVote(roomId: string, participant: Participant, vote: string | null) {
-    const room = await this.getRoomSnapshot(roomId);
-    if (!room) return;
+    const roomRef = this.getRoomRef(roomId);
 
-    const exists = room.participants.some((p) => p.id === participant.id);
+    await runTransaction(this.firestore, async (transaction) => {
+      const roomDoc = await transaction.get(roomRef);
+      if (!roomDoc.exists()) throw new Error(`Room ${roomId} not found`);
 
-    if (!exists) {
-      // Re-add with same name but new id (fresh join after reset)
-      const rejoin: Participant = { ...participant, id: uuidv4(), vote };
-      await this.addParticipant(roomId, rejoin);
-      localStorage.setItem('participant', JSON.stringify(rejoin));
-      return;
-    }
+      const data = roomDoc.data() as Room;
+      const participants: Participant[] = data.participants || [];
 
-    const updated = room.participants.map((p) => (p.id === participant.id ? { ...p, vote } : p));
+      const exists = participants.some((p) => p.id === participant.id);
 
-    await updateDoc(this.getRoomRef(roomId), { participants: updated });
-  }
+      let updatedParticipants: Participant[];
 
-  /** Reset all votes (and hide votes) */
-  resetAllVotes(roomId: string) {
-    return this.withRoom(roomId, async (room) => {
-      const resetParticipants = room.participants.map((p) => ({ ...p, vote: null }));
-      await updateDoc(this.getRoomRef(roomId), {
-        participants: resetParticipants,
-        revealed: false,
-      });
+      if (exists) {
+        // Update the vote
+        updatedParticipants = participants.map((p) =>
+          p.id === participant.id ? { ...p, vote } : p
+        );
+      } else {
+        // Re-add participant with same ID and vote
+        updatedParticipants = [...participants, { ...participant, vote }];
+      }
+
+      transaction.update(roomRef, { participants: updatedParticipants });
     });
   }
 
-  /** Toggle revealed state */
+  resetAllVotes(roomId: string) {
+    return runTransaction(this.firestore, async (transaction) => {
+      const roomRef = this.getRoomRef(roomId);
+      const roomDoc = await transaction.get(roomRef);
+      if (!roomDoc.exists()) return;
+
+      const data = roomDoc.data() as Room;
+      const reset = data.participants.map((p) => ({ ...p, vote: null }));
+
+      transaction.update(roomRef, { participants: reset, revealed: false });
+    });
+  }
+
   toggleReveal(roomId: string) {
-    return this.withRoom(roomId, async (room) => {
-      await updateDoc(this.getRoomRef(roomId), { revealed: !room.revealed });
+    return runTransaction(this.firestore, async (transaction) => {
+      const roomRef = this.getRoomRef(roomId);
+      const roomDoc = await transaction.get(roomRef);
+      if (!roomDoc.exists()) return;
+
+      const data = roomDoc.data() as Room;
+      transaction.update(roomRef, { revealed: !data.revealed });
     });
   }
 }

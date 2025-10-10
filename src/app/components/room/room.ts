@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { FirestoreService } from '~app/services/firestore.service';
+import { Component, inject, signal } from '@angular/core';
+import { FirestoreService } from '~services/firestore.service';
 import type { Room as RoomModel } from '~models/room.model';
-import { CardSelection } from '../card-selection/card-selection';
-import type { Participant } from '~app/models/participant.model';
+import { CardSelection } from '~components/card-selection/card-selection';
+import { ParticipantStore } from '~services/participant-store';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,52 +12,47 @@ import { Router } from '@angular/router';
   styleUrl: './room.css',
 })
 export class Room {
-  firestore = inject(FirestoreService);
-  router = inject(Router);
+  private firestore = inject(FirestoreService);
+  private router = inject(Router);
+  private store = inject(ParticipantStore);
 
-  room: RoomModel | null | undefined;
-  participant: Participant | null | undefined;
+  readonly room = signal<RoomModel | null>(null);
+  readonly participant = this.store.participant;
+  readonly roomId = this.store.roomId;
 
   constructor() {
-    const savedParticipant = localStorage.getItem('participant');
+    const roomId = this.roomId();
+    if (!roomId) this.router.navigate(['/']);
 
-    if (!savedParticipant) {
-      this.router.navigate(['/']);
-      return;
-    }
-
-    this.participant = JSON.parse(savedParticipant);
-
-    // 🔥 Subscribe to the room’s realtime updates
-    this.firestore.getRoom('main-room').subscribe((room) => {
-      this.room = room;
-    });
+    this.firestore.getRoom(roomId!).subscribe((r) => this.room.set(r));
   }
 
-  /** Set the participant’s vote in Firestore */
   async selectCard(card: string) {
-    const participantStr = localStorage.getItem('participant');
-    if (!participantStr) {
-      this.router.navigate(['/']);
-      return;
-    }
+    const p = this.participant();
+    const roomId = this.roomId();
+    if (!p || !roomId) return;
 
-    const participant = JSON.parse(participantStr);
-    await this.firestore.updateVote('main-room', participant, card);
+    await this.firestore.updateVote(roomId, p, card);
   }
 
-  /** Show/Hide all votes */
   toggleReveal() {
-    return this.firestore.toggleReveal('main-room');
+    const roomId = this.roomId();
+    if (!roomId) return;
+
+    return this.firestore.toggleReveal(roomId);
   }
 
-  /** Reset all votes */
   clearVotes() {
-    return this.firestore.resetAllVotes('main-room');
+    const roomId = this.roomId();
+    if (!roomId) return;
+
+    return this.firestore.resetAllVotes(roomId);
   }
 
-  /** Remove all participants */
   async clearParticipants() {
-    await this.firestore.clearParticipants('main-room');
+    const roomId = this.roomId();
+    if (!roomId) return;
+
+    await this.firestore.clearParticipants(roomId);
   }
 }
