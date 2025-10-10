@@ -1,0 +1,18 @@
+<div class="join-container">
+  <h2>Join Scrum Poker Room</h2>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form (submit)="joinRoom(); $event.preventDefault()">
+    <input
+      type="text"
+      [value]="name()"
+      (input)=onNameInput($event)
+      placeholder="Enter your name"
+    />
+
+    <button type="submit" [disabled]="loading()">Join</button>
+  </form>
+</div>

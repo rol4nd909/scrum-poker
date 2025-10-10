@@ -1,0 +1,50 @@
+@if (room) {
+  <p>
+    <strong>Geef een schatting van de inspanning - kies een van de kaarten.</strong><br>
+    Elk teamlid moet de complexiteit van de PBI inschatten.
+  </p>
+
+  <!-- Cards for current participant -->
+  <app-card-selection (cardSelected)="selectCard($event)"/>
+
+  <p>
+    <strong>Kaarten onthullen</strong><br>
+    Zodra iedereen zijn of haar schatting heeft ingediend, onthult de organisator de kaarten.
+  </p>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button (click)="clearParticipants()">clear participants</button>
+    <button (click)="toggleReveal()">
+      {{ room.revealed ? 'Hide Votes' : 'Show Votes' }}
+    </button>
+    <button (click)="clearVotes()">Reset Votes</button>
+  </div>
+
+  <!-- Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Story Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (participant of room.participants; track participant.id) {
+        <tr>
+          <td>{{ participant.name }}</td>
+          <td>
+            @if (!participant.vote) {
+              -
+            } @else if (!room.revealed) {
+              <!-- Hidden vote -->
+              🔒
+            } @else {
+              {{ participant.vote }}
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

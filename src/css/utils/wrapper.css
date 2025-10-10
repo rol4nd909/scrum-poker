@@ -1,0 +1,8 @@
+:where(html) {
+  --constrain: 50rem;
+  --site-space: 1.5rem;
+}
+
+.wrapper {
+  margin-inline: max(var(--site-space), 50vi - var(--constrain) / 2);
+}

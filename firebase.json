@@ -1,0 +1,29 @@
+{
+  "firestore": {
+    "database": "(default)",
+    "location": "europe-west4",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "dist/bld-scrum-poker/browser",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }
+    ]
+  }
+}
