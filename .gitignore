@@ -39,6 +39,7 @@ testem.log
 __screenshots__/
 src/environments/**
 .firebase/
+.env
 
 
 # System files
