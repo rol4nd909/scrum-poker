@@ -1,18 +1,18 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { FirestoreService } from '~services/firestore.service';
-import { ParticipantStore } from '~services/participant-store';
+import { FirestoreService } from '~services/firestore/firestore.service';
+import { ParticipantService } from '~services/participants/participant.service';
 import type { Participant } from '~models/participant.model';
 
 @Component({
   selector: 'app-join-room',
   templateUrl: './join-room.html',
-  styleUrl: './join-room.css',
+  styleUrls: ['./join-room.css'],
 })
 export class JoinRoom {
   private firestore = inject(FirestoreService);
   private router = inject(Router);
-  private store = inject(ParticipantStore);
+  private store = inject(ParticipantService);
 
   readonly name = signal('');
   readonly loading = signal(false);
@@ -21,11 +21,9 @@ export class JoinRoom {
   readonly roomId = 'main-room';
 
   constructor() {
-    const savedParticipant = localStorage.getItem('participant');
-    const savedRoomId = localStorage.getItem('roomId');
-
-    if (savedParticipant && savedRoomId) {
-      this.store.setParticipant(JSON.parse(savedParticipant), savedRoomId);
+    // If ParticipantService already restored a participant, redirect to room
+    const existingRoom = this.store.roomId();
+    if (existingRoom) {
       this.router.navigate(['/room']);
     }
   }

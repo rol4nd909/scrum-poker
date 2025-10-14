@@ -1,59 +1,63 @@
-# BldScrumPoker
+# bld-scrum-poker
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.4.
+Small single-page Angular app for planning poker. This repository uses Angular standalone components
+and Firestore for rooms and participants.
 
-## Development server
+## Quick start
 
-To start a local development server, run:
+Requirements:
+- Node.js (22+ recommended)
+- npm
 
-```bash
-ng serve
-```
+Install dependencies:
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+    npm install
 
-## Code scaffolding
+Run the dev server:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+    npm start
 
-```bash
-ng generate component component-name
-```
+This runs `ng serve` using the development configuration. The app bootstraps with `bootstrapApplication`.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Project layout
 
-```bash
-ng generate --help
-```
+- `src/` — application source
+  - `app/` — main app files and components
+  - `environments/` — firebase configs per environment
+- `public/` — public static files
 
-## Building
+Key files:
+- `src/main.ts` — app bootstrap
+- `src/app/app.config.ts` — global providers (router, firebase, error handlers)
+- `src/app/services/firestore.service.ts` — Firestore operations (rooms & participants)
+- `src/app/services/participant.service.ts` — single source-of-truth for local participant persistence
 
-To build the project run:
+## Firestore and local development
 
-```bash
-ng build
-```
+This project uses Firestore via `@angular/fire` and the Firebase Web SDK.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Local development with the Firestore emulator (recommended for integration tests):
 
-## Running unit tests
+1. Install the Firebase CLI (if you don't have it):
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+       npm install -g firebase-tools
 
-```bash
-ng test
-```
+2. Start the emulator in the repo root (it will pick up `firebase.json`):
 
-## Running end-to-end tests
+       firebase emulators:start --only firestore
 
-For end-to-end (e2e) testing, run:
+3. Configure your local `src/environments/environment.local.ts` or `environment.development.ts` to
+   point to the emulator using the standard firebase SDK `useEmulator` calls. See Firebase docs for details.
 
-```bash
-ng e2e
-```
+Note: Integration tests against the emulator are recommended for transactional and batch operations. Unit
+tests use an injectable `FirestoreAdapter` that wraps Firestore helper functions and is easily mocked.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Tests
 
-## Additional Resources
+Run unit tests (Karma + Jasmine):
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+    npm test
+
+If tests fail when trying to spy on Firebase module-level helpers, prefer the adapter-based mock approach
+already used in the codebase (`FirestoreAdapter`). This avoids issues with non-writable/narrow exports in
+bundled test runners.

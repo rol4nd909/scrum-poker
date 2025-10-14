@@ -14,5 +14,5 @@ import { Header } from './components/header/header';
   `,
 })
 export class App {
-  protected readonly title = signal('bld-scrum-poker aap');
+  protected readonly title = signal('bld-scrum-poker app');
 }

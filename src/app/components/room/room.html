@@ -9,7 +9,7 @@
   </p>
 
   <!-- Cards for current participant -->
-  <app-card-selection (cardSelected)="selectCard($event)"/>
+  <app-card-selection [onSelect]="selectCard.bind(this)"/>
 
   <p>
     <strong>Kaarten onthullen</strong><br>

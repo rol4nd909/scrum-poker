@@ -1,17 +1,18 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-card-selection',
   imports: [],
   templateUrl: './card-selection.html',
-  styleUrl: './card-selection.css',
+  styleUrls: ['./card-selection.css'],
 })
 export class CardSelection {
-  @Output() cardSelected = new EventEmitter<string>();
+  /** callback provided by the parent to receive selected card */
+  @Input() onSelect: (card: string) => void = () => {};
 
   cards = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
 
   selectCard(card: string) {
-    this.cardSelected.emit(card);
+    this.onSelect(card);
   }
 }

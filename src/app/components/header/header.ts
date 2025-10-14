@@ -1,17 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ParticipantStore } from '~services/participant-store';
-import { FirestoreService } from '~services/firestore.service';
+import { ParticipantService } from '~services/participants/participant.service';
+import { FirestoreService } from '~services/firestore/firestore.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.html',
-  styleUrl: './header.css',
+  styleUrls: ['./header.css'],
 })
 export class Header {
   private firestore = inject(FirestoreService);
   private router = inject(Router);
-  private store = inject(ParticipantStore);
+  private store = inject(ParticipantService);
 
   readonly participant = this.store.participant;
   readonly roomId = this.store.roomId;

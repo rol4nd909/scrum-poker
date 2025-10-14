@@ -1,20 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
-import { FirestoreService } from '~services/firestore.service';
+import { FirestoreService } from '~services/firestore/firestore.service';
 import type { Room as RoomModel } from '~models/room.model';
 import { CardSelection } from '~components/card-selection/card-selection';
-import { ParticipantStore } from '~services/participant-store';
+import { ParticipantService } from '~services/participants/participant.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-room',
   imports: [CardSelection],
   templateUrl: './room.html',
-  styleUrl: './room.css',
+  styleUrls: ['./room.css'],
 })
 export class Room {
   private firestore = inject(FirestoreService);
   private router = inject(Router);
-  private store = inject(ParticipantStore);
+  private store = inject(ParticipantService);
 
   readonly room = signal<RoomModel | null>(null);
   readonly participant = this.store.participant;
