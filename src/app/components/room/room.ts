@@ -27,7 +27,7 @@ export class Room {
    */
   readonly sortedParticipants = computed(() => {
     const r = this.room();
-  if (!r || !r.participants) return [] as RoomModel['participants'];
+    if (!r || !r.participants) return [] as RoomModel['participants'];
 
     const arr = [...r.participants];
     if (!r.revealed) return arr;
