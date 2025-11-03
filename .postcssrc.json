@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "postcss-preset-env": {
+      "autoprefixer": false,
+      "stage": 2
+    },
+    "@csstools/postcss-global-data": {
+      "files": ["src/css/global/custom-media.css"]
+    },
+    "postcss-custom-media": {},
+    "postcss-utopia": {
+      "minWidth": "400",
+      "maxWidth": "1200"
+    }
+  }
+}

@@ -1,7 +1,8 @@
-<header>
+<header data-column="medium">
   <h1>Ki&S Webtools Scrum Poker</h1>
+
   @if (participant(); as participant) {
     <span>Hi, {{ participant.name }}</span>
-    <button (click)="leaveRoom()">Leave Room</button>
+    <button class="btn-primary small" (click)="leaveRoom()"><small>Leave Room</small></button>
   }
 </header>

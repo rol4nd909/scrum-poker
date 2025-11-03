@@ -1,0 +1,127 @@
+:root {
+  @media (prefers-reduced-motion: no-preference) {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+* {
+  margin: 0;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove list styles and keep semantic meaning on ul, ol elements with a class on it, which suggests default styling will be removed */
+:is(ul, ol)[class] {
+  list-style-type: '';
+  margin-block: 0;
+}
+
+/* Set core body defaults */
+body {
+  min-block-size: 100%;
+  line-height: 1.5;
+
+  /* Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
+  line-height: 1.1;
+}
+
+/* Balance text wrapping on headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/**
+ * This CSS block is a More Effective CSS Image Reset. 
+ * It resets the default styles of an image element
+ * and adds some additional styles to improve its rendering. 
+ * 
+ * The `max-width: 100%;` ensures that the image does not exceed its container's width, 
+ * while maintaining its aspect ratio with `height: auto;`. 
+ * The `vertical-align: middle;` aligns the image vertically with the text. 
+ * The `font-style: italic;` adds a slight italic effect to the image alt text.
+ * The `background-repeat: no-repeat;` ensures that the image does not repeat itself. 
+ * The `background-size: cover;` ensures that the image fills its container without repeating. 
+ * 
+ * Finally, the `shape-margin: 1rem;` adds some margin around the image to improve its spacing with other elements.
+ */
+img,
+picture {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  font-style: italic;
+  background-repeat: no-repeat;
+  background-size: cover;
+  shape-margin: 1rem;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: currentColor;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+/* :target {
+  scroll-margin-block: 5ex;
+} */

@@ -1,3 +1,15 @@
 @for (card of cards; track $index) {
-  <button (click)="selectCard(card)">{{ card }}</button>
+  <button
+    class="card"
+    (click)="selectCard(cardId(card))"
+    [attr.aria-label]="isSvgCard(card) ? card.id : null"
+    [class.selected]="cardId(card) === selected"
+    [attr.aria-pressed]="cardId(card) === selected"
+  >
+    @if (cardSvg(card)) {
+      <span [innerHTML]="cardSvg(card)"></span>
+    } @else {
+      {{ cardId(card) }}
+    }
+  </button>
 }

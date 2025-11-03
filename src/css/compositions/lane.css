@@ -1,0 +1,26 @@
+.lane {
+  row-gap: 3rem;
+  padding-block: 3rem;
+  background-color: var(--_bg);
+  transform: translate3d(0, 0, 0);
+
+  &.lane--dark {
+    --_bg: var(--surface);
+
+    + .lane--dark {
+      padding-block-start: 0;
+    }
+  }
+
+  &.lane--light {
+    --_bg: color-mix(in hsl, var(--text), var(--surface) 95%);
+
+    + .lane--light {
+      padding-block-start: 0;
+    }
+  }
+
+  .hero + &:not(.lane--light) {
+    padding-block-start: calc(3rem / 2);
+  }
+}

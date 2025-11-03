@@ -1,0 +1,14 @@
+/* @link https://utopia.fyi/type/calculator?c=400,16,1.2,1200,21,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,&g=s,l,xl,12 */
+
+:root {
+  @utopia typeScale({
+    minFontSize: 16,
+    maxFontSize: 21,
+    minTypeScale: 1.2,
+    maxTypeScale: 1.25,
+    positiveSteps: 5,
+    negativeSteps: 1,
+    prefix: "step",
+    relativeTo: "container"
+  });
+}

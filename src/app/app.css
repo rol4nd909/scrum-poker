@@ -1,6 +1,4 @@
-main {
-  display: grid;
-  gap: var(--size-5);
-  padding: var(--size-3);
-  background-color: var(--surface-3);
+:host,
+router-outlet {
+  display: contents;
 }

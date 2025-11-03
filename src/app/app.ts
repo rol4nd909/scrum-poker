@@ -1,18 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from './components/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header],
+  imports: [RouterOutlet],
   styleUrls: ['./app.css'],
-  template: `
-    <app-header />
-    <main class="wrapper">
-      <router-outlet></router-outlet>
-    </main>
-  `,
+  templateUrl: './app.html',
 })
-export class App {
-  protected readonly title = signal('bld-scrum-poker app');
-}
+export class App {}

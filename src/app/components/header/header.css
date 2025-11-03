@@ -1,17 +1,18 @@
 :host {
-  display: contents;
+  background-color: var(--surface-2);
+  padding-block: var(--space-xs);
+  box-shadow: var(--shadow-s);
 }
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--size-4);
-  padding: var(--size-3);
+  gap: var(--space-s);
 
   h1 {
     flex: 1;
     max-inline-size: none;
-    font-size: var(--font-size-1);
+    font-size: var(--step-1);
   }
 }

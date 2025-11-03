@@ -1,18 +1,43 @@
-<div class="join-container">
-  <h2>Join Scrum Poker Room</h2>
+<main data-column='xsmall'>
+  <!-- <h1>Step 5</h1>
+  <h2>Step 4</h2>
+  <h3>Step 3</h3>
+  <h4>Step 2</h4>
+  <h5>Step 1</h5>
+  <h6>Step 0</h6>
+
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum aspernatur quod fugit doloremque hic culpa ipsa
+    omnis aliquid ex neque. Enim quam fugiat nesciunt velit natus a ratione mollitia nostrum.</p>
+
+  <small>step -1 </small>
+
+  <h2>Join Scrum Poker Room</h2> -->
 
   @if (error()) {
     <p class="error">{{ error() }}</p>
   }
 
   <form (submit)="joinRoom(); $event.preventDefault()">
-    <input
-      type="text"
-      [value]="name()"
-      (input)=onNameInput($event)
-      placeholder="Enter your name"
-    />
+    <legend>Join Scrum Poker Room</legend>
 
-    <button type="submit" [disabled]="loading()">Join</button>
+    <div>
+      <input
+        type="text"
+        [value]="name()"
+        (input)=onNameInput($event)
+        placeholder="Enter your name"
+        id="nameInput"
+      />
+
+      <button class="btn-primary" type="submit" [disabled]="loading()">Join</button>
+    </div>
+
+    <!-- <div class="wrap">
+      <div class="aap">aap</div>
+      <div class="noot">aap</div>
+      <div class="mies">aap</div>
+      <div class="primary">aap</div>
+      <div class="primary-light">aap</div>
+    </div> -->
   </form>
-</div>
+</main>

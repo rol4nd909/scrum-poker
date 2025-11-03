@@ -1,54 +1,108 @@
-@if (!room()) {
-  <p>Loading room...</p>
-}
+<app-header class="grid" data-grid="fullbleed" />
 
-@if (room(); as room) {
-  <p>
-    <strong>Geef een schatting van de inspanning - kies een van de kaarten.</strong><br>
-    Elk teamlid moet de complexiteit van de PBI inschatten.
-  </p>
+<main class="grid" data-grid="fullbleed">
+  @if (!room()) {
+    <p>Loading room...</p>
+  }
 
-  <!-- Cards for current participant -->
-  <app-card-selection [onSelect]="selectCard.bind(this)"/>
+  @if (room(); as room) {
+    <p>
+      <strong>Geef een schatting van de inspanning - kies een van de kaarten.</strong><br>
+      Elk teamlid moet de complexiteit van de PBI inschatten.
+    </p>
 
-  <p>
-    <strong>Kaarten onthullen</strong><br>
-    Zodra iedereen zijn of haar schatting heeft ingediend, onthult de organisator de kaarten.
-  </p>
+    <!-- Cards for current participant -->
+  <app-card-selection [onSelect]="selectCard.bind(this)" [selected]="participant()?.vote ?? null" />
 
-  <!-- Controls -->
-  <div class="controls">
-    <button (click)="clearParticipants()">clear participants</button>
-    <button (click)="toggleReveal()">
-      {{ room.revealed ? 'Hide Votes' : 'Show Votes' }}
-    </button>
-    <button (click)="clearVotes()">Reset Votes</button>
-  </div>
+    <hr>
 
-  <!-- Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Story Points</th>
-      </tr>
-    </thead>
-    <tbody>
-  @for (participant of sortedParticipants(); track participant.id) {
-        <tr>
-          <td>{{ participant.name }}</td>
-          <td>
-            @if (!participant.vote) {
-              -
-            } @else if (!room.revealed) {
-              <!-- Hidden vote -->
-              🔒
-            } @else {
-              {{ participant.vote }}
-            }
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
-}
+    <p>
+      <strong>Kaarten onthullen</strong><br>
+      Zodra iedereen zijn of haar schatting heeft ingediend, onthult de organisator de kaarten.
+    </p>
+
+    <div class="participant-table-container">
+      <!-- Controls -->
+      <div class="controls">
+        <button class="btn-icon small" (click)="clearParticipantsDialog.showModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-x-icon lucide-user-round-x"><path d="M2 21a8 8 0 0 1 11.873-7"/><circle cx="10" cy="8" r="5"/><path d="m17 17 5 5"/><path d="m22 17-5 5"/></svg>
+          <span class="sr-only">Clear participant list</span>
+        </button>
+        <button class="btn-secondary small" (click)="deleteEstimatesDialog.showModal()">Delete Estimates</button>
+        <button class="btn-primary small" (click)="toggleReveal()">
+          <small>
+            {{ room.revealed ? 'Hide' : 'Show' }}
+          </small>
+        </button>
+
+        <!-- Dialogs -->
+         <dialog #clearParticipantsDialog class="flow">
+            <h2>Clear Room</h2>
+            <p>Clearing the room of inactive participants, removes all the names from the list but participants can still see the room.</p>
+            <p>Each participant reappears once he submits a vote.</p>
+            <p>Do you want to continue?</p>
+
+            <div class="dialog-actions flex inline-wrap">
+              <button class="small" type="button" (click)="clearParticipantsDialog.close()">Cancel</button>
+              <button class="btn-primary small" type="button" (click)="clearParticipants()">Clear room</button>
+            </div>
+         </dialog>
+
+
+         <dialog #deleteEstimatesDialog class="flow">
+            <h2>Delete Estimates</h2>
+            <p>This will clear all estimates in this room.</p>
+            <p>Do you want to continue?</p>
+
+            <div class="dialog-actions flex inline-wrap">
+              <button class="small" type="button" (click)="deleteEstimatesDialog.close()">Cancel</button>
+              <button class="btn-primary small" type="button" (click)="clearVotes()">Delete estimates</button>
+            </div>
+         </dialog>
+      </div>
+
+      <!-- Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Story Points</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (participant of sortedParticipants(); track participant.id) {
+            <tr>
+              <td>{{ participant.name }}</td>
+              <td>
+
+
+                  <div class="card" [class.show]="room.revealed">
+                    @if (!participant.vote) {
+                      <span class="front">-</span>
+                      <span class="back"></span>
+                    } @else {
+                      <div class="front">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-icon lucide-lock"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                      </div>
+                      <div class="back">
+                        @if (participant.vote && room.revealed) {
+                          @if (voteSvg(participant.vote); as svg) {
+                            <span [innerHTML]="svg"></span>
+                          } @else {
+                            {{ participant.vote }}
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</main>

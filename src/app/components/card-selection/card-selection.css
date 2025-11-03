@@ -1,7 +1,7 @@
 :host {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--size-3);
+  gap: var(--space-2xs);
   justify-content: center;
 }
 
@@ -9,12 +9,32 @@ button {
   display: grid;
   place-items: center;
   padding: 0;
-  font-size: var(--font-size-5);
+  font-size: var(--step-2);
   background-color: var(--surface-2);
-  border-color: var(--surface-2);
+  border: none;
+  box-shadow: var(--shadow-s);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
   aspect-ratio: 3/4;
   max-inline-size: 6rem;
   inline-size: 100%;
+
+  transition: all 0.2s var(--ease);
+
+  &:is(:hover, :focus-visible) {
+    background-color: var(--surface-1);
+    box-shadow: var(--shadow-m);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    background-color: var(--primary-light);
+    color: var(--text-light);
+  }
+
+  > span {
+    display: contents;
+  }
 }

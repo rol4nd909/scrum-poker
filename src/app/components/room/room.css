@@ -1,17 +1,115 @@
 :host {
-  display: grid;
-  gap: var(--size-4);
+  display: contents;
 }
 
-table {
-  --nice-inner-radius: calc(var(--radius-2) - 2px);
+main {
+  row-gap: var(--space-s);
+  padding-block-end: 3rem;
 
-  background: var(--surface-2);
-  border: none;
-  border-radius: var(--radius-2);
-  inline-size: auto;
+  > * {
+    grid-column: medium;
+  }
 
-  tr > :first-child {
-    text-align: start;
+  app-card-selection {
+    grid-column: xsmall;
+  }
+}
+
+.card {
+  display: grid;
+  aspect-ratio: 3/4;
+  max-inline-size: 2.5rem;
+  inline-size: 100%;
+  font-size: var(--step--1);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-s);
+  transform-style: preserve-3d;
+  justify-self: center;
+
+  &.show {
+    animation: show-card 1s var(--ease) forwards;
+  }
+
+  > * {
+    grid-area: 1 / 1;
+    block-size: 100%;
+    inline-size: 100%;
+    background: var(--surface-2);
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
+    backface-visibility: hidden;
+
+    > span {
+      display: contents;
+
+      font-size: var(--step-0);
+    }
+  }
+
+  .back {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes show-card {
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+.participant-table-container {
+  display: grid;
+  box-shadow: var(--shadow-m);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  > div {
+    container-type: inline-size;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-s);
+    background-color: var(--surface-2);
+    border-start-start-radius: var(--radius-md);
+    border-start-end-radius: var(--radius-md);
+
+    > :first-child {
+      margin-inline-end: 40cqi;
+    }
+  }
+
+  > table {
+    border-spacing: 0;
+    background-color: var(--surface-3);
+
+    tr {
+      block-size: 4rem;
+
+      &:last-child > td {
+        border-block-end: none;
+      }
+
+      > th:first-child {
+        text-align: start;
+      }
+    }
+
+    th {
+      font-size: var(--step--1);
+    }
+
+    td {
+      color: var(--text-muted);
+    }
+
+    th,
+    td {
+      padding-block: 0.25rem;
+      padding-inline: var(--space-s);
+      border-block-end: 1px solid oklch(from var(--border-muted) l c h / 0.5);
+    }
   }
 }
