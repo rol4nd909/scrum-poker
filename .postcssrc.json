@@ -2,7 +2,24 @@
   "plugins": {
     "postcss-preset-env": {
       "autoprefixer": false,
-      "stage": 2
+      "stage": 2,
+      "features": {
+        "logical-properties-and-values": false,
+        "prefers-color-scheme-query": false,
+        "gap-properties": false,
+        "custom-properties": false,
+        "is-pseudo-class": false,
+        "focus-within-pseudo-class": false,
+        "focus-visible-pseudo-class": false,
+        "color-functional-notation": false,
+        "cascade-layers": false,
+        "double-position-gradients": false,
+        "has-pseudo-class": false,
+        "place-properties": false,
+        "media-query-ranges": false,
+        "custom-media-queries": true,
+        "light-dark-function": false
+      }
     },
     "@csstools/postcss-global-data": {
       "files": ["src/css/global/custom-media.css"]
