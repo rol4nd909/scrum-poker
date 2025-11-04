@@ -73,6 +73,30 @@ export class Room {
     this.firestore.getRoom(roomId!).subscribe((r) => this.room.set(r));
   }
 
+  /**
+   * Helper: persist a cleared vote locally (participant.vote = null)
+   * Swallows storage errors to avoid crashing the user flow.
+   */
+  private clearLocalParticipantVote(roomId: string) {
+    const p = this.participant();
+    if (!p) return;
+    try {
+      const updated = { ...p, vote: null };
+      this.store.setParticipant(updated, roomId);
+    } catch {
+      // ignore local persistence errors
+    }
+  }
+
+  /** Close a dialog ElementRef safely (no-ops if missing) */
+  private closeDialogRef(dialog?: ElementRef<HTMLDialogElement>) {
+    try {
+      dialog?.nativeElement.close();
+    } catch {
+      // ignore
+    }
+  }
+
   async selectCard(card: string) {
     const p = this.participant();
     const roomId = this.roomId();
@@ -99,22 +123,10 @@ export class Room {
     if (!roomId) return;
 
     return this.firestore.resetAllVotes(roomId).then(() => {
-      // Ensure the locally stored participant vote is cleared so the UI
-      // stays in sync after a reset. ParticipantService stores a single
-      // participant entry in localStorage; update it if present.
-      const p = this.participant();
-      if (p) {
-        try {
-          const updated = { ...p, vote: null };
-          this.store.setParticipant(updated, roomId);
-        } catch {
-          // ignore local persistence errors
-        }
-      }
-      // close the delete estimates confirmation dialog if present
-      try {
-        this.deleteEstimatesDialog?.nativeElement.close();
-      } catch {}
+      // Clear local participant vote and close the delete-estimates dialog
+      // using the centralized helpers to avoid duplication.
+      this.clearLocalParticipantVote(roomId);
+      this.closeDialogRef(this.deleteEstimatesDialog);
     });
   }
 
@@ -124,10 +136,9 @@ export class Room {
 
     await this.firestore.clearParticipants(roomId);
 
-    // close the confirmation dialog if present
-    try {
-      this.clearParticipantsDialog?.nativeElement.close();
-    } catch {}
+    // Close dialog and clear local participant vote using helpers.
+    this.closeDialogRef(this.clearParticipantsDialog);
+    this.clearLocalParticipantVote(roomId);
   }
 
   voteSvg(vote?: string | null): SafeHtml | null {
