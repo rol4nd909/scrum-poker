@@ -12,7 +12,7 @@
     </p>
 
     <!-- Cards for current participant -->
-  <app-card-selection [onSelect]="selectCard.bind(this)" [selected]="participant()?.vote ?? null" />
+    <app-card-selection [onSelect]="selectCard.bind(this)" [selected]="participant()?.vote ?? null" />
 
     <hr>
 
@@ -22,7 +22,6 @@
     </p>
 
     <div class="participant-table-container">
-      <!-- Controls -->
       <div class="controls">
         <button class="btn-icon small" (click)="clearParticipantsDialog.showModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-x-icon lucide-user-round-x"><path d="M2 21a8 8 0 0 1 11.873-7"/><circle cx="10" cy="8" r="5"/><path d="m17 17 5 5"/><path d="m22 17-5 5"/></svg>
@@ -33,33 +32,30 @@
           {{ room.revealed ? 'Hide' : 'Show' }}
         </button>
 
-        <!-- Dialogs -->
-         <dialog #clearParticipantsDialog class="flow">
-            <h2>Clear Room</h2>
-            <p>Clearing the room of inactive participants, removes all the names from the list but participants can still see the room.</p>
-            <p>Each participant reappears once he submits a vote.</p>
-            <p>Do you want to continue?</p>
+        <dialog #clearParticipantsDialog class="flow">
+          <h2>Clear Room</h2>
+          <p>Clearing the room of inactive participants, removes all the names from the list but participants can still see the room.</p>
+          <p>Each participant reappears once he submits a vote.</p>
+          <p>Do you want to continue?</p>
 
-            <div class="dialog-actions flex inline-wrap">
-              <button class="small" type="button" (click)="clearParticipantsDialog.close()">Cancel</button>
-              <button class="btn-primary small" type="button" (click)="clearParticipants()">Clear room</button>
-            </div>
-         </dialog>
+          <div class="dialog-actions flex inline-wrap">
+            <button class="small" type="button" (click)="clearParticipantsDialog.close()">Cancel</button>
+            <button class="btn-primary small" type="button" (click)="clearParticipants()">Clear room</button>
+          </div>
+        </dialog>
 
+        <dialog #deleteEstimatesDialog class="flow">
+          <h2>Delete Estimates</h2>
+          <p>This will clear all estimates in this room.</p>
+          <p>Do you want to continue?</p>
 
-         <dialog #deleteEstimatesDialog class="flow">
-            <h2>Delete Estimates</h2>
-            <p>This will clear all estimates in this room.</p>
-            <p>Do you want to continue?</p>
-
-            <div class="dialog-actions flex inline-wrap">
-              <button class="small" type="button" (click)="deleteEstimatesDialog.close()">Cancel</button>
-              <button class="btn-primary small" type="button" (click)="clearVotes()">Delete estimates</button>
-            </div>
-         </dialog>
+          <div class="dialog-actions flex inline-wrap">
+            <button class="small" type="button" (click)="deleteEstimatesDialog.close()">Cancel</button>
+            <button class="btn-primary small" type="button" (click)="clearVotes()">Delete estimates</button>
+          </div>
+        </dialog>
       </div>
 
-      <!-- Table -->
       <table>
         <thead>
           <tr>
