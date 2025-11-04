@@ -1,13 +1,13 @@
 import { Component, inject, signal, computed, ViewChild, type ElementRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import type { SafeHtml } from '@angular/platform-browser';
-import { getCardSvgString } from '~components/card-selection/cards.data';
-import { FirestoreService } from '~services/firestore/firestore.service';
-import type { Room as RoomModel } from '~models/room.model';
-import { CardSelection } from '~components/card-selection/card-selection';
-import { ParticipantService } from '~services/participants/participant.service';
 import { Router } from '@angular/router';
-import { Header } from '../header/header';
+import type { Room as RoomModel } from '~models/room.model';
+import { FirestoreService } from '~services/firestore/firestore.service';
+import { ParticipantService } from '~services/participants/participant.service';
+import { getCardSvgString } from '~components/card-selection/cards.data';
+import { CardSelection } from '~components/card-selection/card-selection';
+import { Header } from '~components/header/header';
 
 @Component({
   selector: 'app-room',
@@ -77,11 +77,13 @@ export class Room {
    * Helper: persist a cleared vote locally (participant.vote = null)
    * Swallows storage errors to avoid crashing the user flow.
    */
-  private clearLocalParticipantVote(roomId: string) {
+  private updateLocalParticipantVote(roomId: string, card: string | null = null) {
     const p = this.participant();
+
     if (!p) return;
+
     try {
-      const updated = { ...p, vote: null };
+      const updated = { ...p, vote: card };
       this.store.setParticipant(updated, roomId);
     } catch {
       // ignore local persistence errors
@@ -100,15 +102,12 @@ export class Room {
   async selectCard(card: string) {
     const p = this.participant();
     const roomId = this.roomId();
+
     if (!p || !roomId) return;
+
     await this.firestore.updateVote(roomId, p, card);
-    // update local participant so the selected card persists across reloads
-    try {
-      const updated = { ...p, vote: card };
-      this.store.setParticipant(updated, roomId);
-    } catch {
-      // ignore local persistence errors
-    }
+
+    this.updateLocalParticipantVote(roomId, card);
   }
 
   toggleReveal() {
@@ -118,16 +117,16 @@ export class Room {
     return this.firestore.toggleReveal(roomId);
   }
 
-  clearVotes() {
+  async clearVotes() {
     const roomId = this.roomId();
     if (!roomId) return;
 
-    return this.firestore.resetAllVotes(roomId).then(() => {
-      // Clear local participant vote and close the delete-estimates dialog
-      // using the centralized helpers to avoid duplication.
-      this.clearLocalParticipantVote(roomId);
-      this.closeDialogRef(this.deleteEstimatesDialog);
-    });
+    await this.firestore.resetAllVotes(roomId);
+
+    // Clear local participant vote and close the delete-estimates dialog
+    // using the centralized helpers to avoid duplication.
+    this.updateLocalParticipantVote(roomId);
+    this.closeDialogRef(this.deleteEstimatesDialog);
   }
 
   async clearParticipants() {
@@ -138,7 +137,7 @@ export class Room {
 
     // Close dialog and clear local participant vote using helpers.
     this.closeDialogRef(this.clearParticipantsDialog);
-    this.clearLocalParticipantVote(roomId);
+    this.updateLocalParticipantVote(roomId);
   }
 
   voteSvg(vote?: string | null): SafeHtml | null {
