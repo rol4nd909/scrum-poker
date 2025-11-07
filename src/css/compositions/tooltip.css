@@ -1,0 +1,21 @@
+.tooltip {
+  position: absolute;
+  inset-block-start: anchor(end);
+  inset-inline-start: anchor(start);
+  position-try: flip-block;
+
+  margin-block: var(--space-3xs);
+  padding: var(--space-2xs);
+  border-radius: var(--radius-sm);
+  background: oklch(from var(--surface-1) l c h / 0.95);
+  border: 1px solid var(--border-muted);
+  box-shadow: var(--shadow-m);
+  font-size: var(--step--1);
+
+  max-inline-size: 20ch;
+  text-align: center;
+}
+
+[interestfor] {
+  interest-delay: 0.1s;
+}

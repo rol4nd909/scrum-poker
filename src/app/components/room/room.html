@@ -23,7 +23,10 @@
 
     <div class="participant-table-container">
       <div class="controls">
-        <button class="btn-icon small" (click)="clearParticipantsDialog.showModal()">
+        <button class="btn-icon small"
+                interestfor="clearParticipantsHint"
+                style="anchor-name:--cph"
+                (click)="clearParticipantsDialog.showModal()">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-x-icon lucide-user-round-x"><path d="M2 21a8 8 0 0 1 11.873-7"/><circle cx="10" cy="8" r="5"/><path d="m17 17 5 5"/><path d="m22 17-5 5"/></svg>
           <span class="sr-only">Clear participant list</span>
         </button>
@@ -54,6 +57,11 @@
             <button class="btn-primary small" type="button" (click)="clearVotes()">Delete estimates</button>
           </div>
         </dialog>
+
+        <!-- hint / tooltip -->
+        <div class="tooltip" id="clearParticipantsHint" aria-label="actions" popover="hint" style="position-anchor:--cph">
+          Remove the names of all participants
+        </div>
       </div>
 
       <table>
