@@ -25,6 +25,10 @@ export class Room {
   @ViewChild('deleteEstimatesDialog') deleteEstimatesDialog?: ElementRef<HTMLDialogElement>;
 
   readonly room = signal<RoomModel | null>(null);
+  // Track the last reset timestamp we've observed so we only clear local
+  // participant state when a new reset event arrives.
+  private lastSeenResetAt: number | null = null;
+
   readonly participant = this.store.participant;
   readonly roomId = this.store.roomId;
 
@@ -70,7 +74,24 @@ export class Room {
     const roomId = this.roomId();
     if (!roomId) this.router.navigate(['/']);
 
-    this.firestore.getRoom(roomId!).subscribe((r) => this.room.set(r));
+    this.firestore.getRoom(roomId!).subscribe((r) => {
+      // When the backend signals a vote reset (lastResetAt) we should
+      // clear the locally persisted participant vote for all clients.
+      // Only act when the timestamp advances to avoid repeated clears.
+      if (r && (r as any).lastResetAt) {
+        const ts = (r as any).lastResetAt as number;
+        if (ts && ts !== this.lastSeenResetAt) {
+          this.lastSeenResetAt = ts;
+          // clear the locally stored vote for this client (if present)
+          const rid = roomId!;
+          try {
+            this.updateLocalParticipantVote(rid, null);
+          } catch {}
+        }
+      }
+
+      this.room.set(r);
+    });
   }
 
   /**

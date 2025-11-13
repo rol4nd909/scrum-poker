@@ -42,6 +42,7 @@ export class FirestoreService {
           ({
             id: roomData.id as string,
             revealed: !!roomData.revealed,
+            lastResetAt: (roomData as Partial<Room>).lastResetAt ?? null,
             participants: participants || [],
           } as Room)
       )
@@ -133,7 +134,8 @@ export class FirestoreService {
     await batch.commit();
 
     // Also reset the revealed flag on the room document.
-    return this.adapter.updateDoc(roomRef, { revealed: false });
+    // Also write a timestamp so clients can react (clear local storage).
+    return this.adapter.updateDoc(roomRef, { revealed: false, lastResetAt: Date.now() });
   }
 
   toggleReveal(roomId: string) {
