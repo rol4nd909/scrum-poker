@@ -77,7 +77,7 @@ main {
     border-start-end-radius: var(--radius-md);
 
     > :first-child {
-      margin-inline-end: 40cqi;
+      margin-inline-end: clamp(1.5rem, -10rem + 60cqi, 40cqi);
     }
   }
 
