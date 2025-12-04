@@ -1,6 +1,4 @@
-@layer --fonts, --reset, --base, --compositions, --blocks, --utils;
-
-/* @import 'global/fonts.css' layer(--fonts); */
+@layer --reset, --base, --compositions, --blocks, --utils;
 
 @import 'global/reset.css' layer(--reset);
 
@@ -12,9 +10,7 @@
 @import 'compositions/dialog.css' layer(--compositions);
 @import 'compositions/grid.css' layer(--compositions);
 @import 'compositions/flex.css' layer(--compositions);
-@import 'compositions/flow.css' layer(--compositions);
-@import 'compositions/lane.css' layer(--compositions);
 @import 'compositions/tooltip.css' layer(--compositions);
 
-@import 'utilities/typography.css' layer(--utils.--typography);
+@import 'utilities/flow.css' layer(--utils.--flow);
 @import 'utilities/sr-only.css' layer(--utils.--sr-only);

@@ -21,9 +21,6 @@
         "light-dark-function": false
       }
     },
-    "@csstools/postcss-global-data": {
-      "files": ["src/css/global/custom-media.css"]
-    },
     "postcss-custom-media": {},
     "postcss-utopia": {
       "minWidth": "400",
